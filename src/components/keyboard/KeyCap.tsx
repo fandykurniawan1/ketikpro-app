@@ -7,6 +7,7 @@ interface KeyCapProps {
   isHome?: boolean;
   isAnchorReturn?: boolean;
   hitState?: 'ok' | 'bad';
+  onClick?: () => void;
 }
 
 export const KeyCap: React.FC<KeyCapProps> = ({
@@ -15,16 +16,20 @@ export const KeyCap: React.FC<KeyCapProps> = ({
   isHome = false,
   isAnchorReturn = false,
   hitState,
+  onClick,
 }) => {
   const isLetter = keyDef.label.length === 1 && /[a-zA-Z]/.test(keyDef.label);
   const isSpecial = keyDef.label.length > 1;
 
   return (
     <div
+      onClick={onClick}
       data-active={isActive ? 'true' : undefined}
       data-hit={hitState}
       data-anchor={isAnchorReturn ? 'true' : undefined}
       className={`key-cap relative flex h-11 sm:h-12 shrink-0 flex-col items-center justify-center rounded-xl font-mono select-none transition-all duration-100 ${
+        onClick ? 'cursor-pointer active:scale-95' : ''
+      } ${
         keyDef.w ?? 'w-9 sm:w-11'
       } ${
         isActive

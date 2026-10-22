@@ -64,7 +64,7 @@ const levelOneTabs: TabItem[] = [
       'Telunjuk Kiri & Kanan: Menangani 2 kolom tengah (F, R, V, G, T, B / J, U, M, H, Y, N).',
       'Ibu Jari (Kedua Tangan): Bertugas khusus dan eksklusif menekan tombol Spasi.',
     ],
-    highlight: 'Gunakan warna panduan pada tuts keyboard KetikPro untuk mengingat jari pemiliknya.',
+    highlight: 'Gunakan warna panduan pada tuts keyboard asailmu untuk mengingat jari pemiliknya.',
   },
   {
     id: 'tactile',

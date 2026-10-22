@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Hand, CheckCircle2, ShieldCheck } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Hand, CheckCircle2, ShieldCheck, Anchor } from 'lucide-react';
 import { fingerMap, fingerNames } from '@/core/constants/curriculum';
 import { HomeRowGuide } from '@/components/keyboard/HomeRowGuide';
 import { LevelOneGuide } from '@/components/keyboard/LevelOneGuide';
@@ -45,17 +46,27 @@ export const FingerGuidePage: React.FC = () => {
   return (
     <div className="mx-auto max-w-4xl space-y-10 animate-in fade-in duration-300">
       {/* Page Header */}
-      <div>
-        <div className="flex items-center gap-2 text-xs font-semibold text-primary uppercase tracking-wider">
-          <Hand className="h-4 w-4" />
-          <span>Panduan Ergonomi & Posisi 10 Jari</span>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <div className="flex items-center gap-2 text-xs font-semibold text-primary uppercase tracking-wider">
+            <Hand className="h-4 w-4" />
+            <span>Panduan Ergonomi & Posisi 10 Jari</span>
+          </div>
+          <h1 className="text-3xl font-extrabold tracking-tight text-foreground mt-1">
+            Tata Cara Mengetik Benar
+          </h1>
+          <p className="text-sm text-muted-foreground mt-1">
+            Kuasai fondasi posisi dan pembagian tugas 10 jari agar mengetik lebih cepat tanpa cepat lelah.
+          </p>
         </div>
-        <h1 className="text-3xl font-extrabold tracking-tight text-foreground mt-1">
-          Tata Cara Mengetik Benar
-        </h1>
-        <p className="text-sm text-muted-foreground mt-1">
-          Kuasai fondasi posisi dan pembagian tugas 10 jari agar mengetik lebih cepat tanpa cepat lelah.
-        </p>
+
+        <Link
+          to="/home-row"
+          className="inline-flex items-center gap-2 rounded-xl border border-primary/30 bg-primary/5 hover:bg-primary/10 px-4 py-2.5 text-xs font-semibold text-primary transition-all self-start sm:self-center shadow-xs shrink-0"
+        >
+          <Anchor className="h-4 w-4" />
+          <span>Menu Home Row: Posisi Dasar</span>
+        </Link>
       </div>
 
       {/* Home row visual guide */}

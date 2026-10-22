@@ -11,6 +11,7 @@ import {
   Keyboard,
   Volume2,
   VolumeX,
+  Anchor,
 } from 'lucide-react';
 import { useTheme } from '@/hooks/useTheme';
 import { useSound } from '@/hooks/useSound';
@@ -18,6 +19,7 @@ import { useSound } from '@/hooks/useSound';
 const navItems = [
   { to: '/', label: 'Dashboard', icon: LayoutDashboard },
   { to: '/belajar', label: 'Kurikulum', icon: GraduationCap },
+  { to: '/home-row', label: 'Home Row', sublabel: 'Posisi Dasar Jari Tangan', icon: Anchor },
   { to: '/tes', label: 'Tes Kecepatan', icon: Timer },
   { to: '/panduan', label: 'Panduan Jari', icon: Hand },
   { to: '/pengaturan', label: 'Pengaturan', icon: Settings },
@@ -47,7 +49,7 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
                 <Keyboard className="h-5 w-5" />
               </span>
               <div>
-                <span className="text-lg font-bold tracking-tight block">KetikPro</span>
+                <span className="text-lg font-bold tracking-tight block">asailmu</span>
                 <span className="text-xs text-muted-foreground block font-medium">Master 10 Jari</span>
               </div>
             </Link>
@@ -73,21 +75,50 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
 
           {/* Nav links */}
           <nav className="flex gap-1 overflow-x-auto p-3 md:flex-col md:px-4 md:py-2">
-            {navItems.map(({ to, label, icon: Icon }) => (
+            {navItems.map(({ to, label, sublabel, icon: Icon }) => (
               <NavLink
                 key={to}
                 to={to}
                 end={to === '/'}
+                title={sublabel ? `${label}: ${sublabel}` : label}
                 className={({ isActive }) =>
-                  `flex shrink-0 items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-medium transition-all ${
+                  `flex shrink-0 items-center justify-between rounded-xl px-3.5 py-2.5 text-sm font-medium transition-all ${
                     isActive
                       ? 'bg-primary text-primary-foreground shadow-sm'
                       : 'text-muted-foreground hover:bg-muted hover:text-foreground'
                   }`
                 }
               >
-                <Icon className="h-4 w-4 shrink-0" />
-                <span>{label}</span>
+                {({ isActive }) => (
+                  <>
+                    <div className="flex items-center gap-3 min-w-0">
+                      <Icon className="h-4 w-4 shrink-0" />
+                      <div className="min-w-0 text-left">
+                        <span className="block truncate leading-tight">{label}</span>
+                        {sublabel && (
+                          <span
+                            className={`hidden md:block text-[10px] truncate leading-tight mt-0.5 ${
+                              isActive ? 'text-primary-foreground/80' : 'text-muted-foreground'
+                            }`}
+                          >
+                            {sublabel}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    {sublabel && (
+                      <span
+                        className={`hidden lg:inline-block text-[9px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider shrink-0 ml-1 ${
+                          isActive
+                            ? 'bg-white/20 text-white'
+                            : 'bg-primary/10 text-primary'
+                        }`}
+                      >
+                        Dasar
+                      </span>
+                    )}
+                  </>
+                )}
               </NavLink>
             ))}
           </nav>

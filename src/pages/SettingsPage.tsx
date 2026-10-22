@@ -102,7 +102,7 @@ export const SettingsPage: React.FC = () => {
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = `ketikpro-backup-${new Date().toISOString().split('T')[0]}.json`;
+      link.download = `asailmu-backup-${new Date().toISOString().split('T')[0]}.json`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -481,7 +481,7 @@ export const SettingsPage: React.FC = () => {
 
       {/* Footer info */}
       <footer className="text-center text-xs text-muted-foreground py-6 border-t border-border/40">
-        <p className="font-semibold text-foreground">KetikPro — Master Touch Typing 10 Jari</p>
+        <p className="font-semibold text-foreground">asailmu — Master Touch Typing 10 Jari</p>
         <p className="mt-1">
           Dibuat dengan React 19, TypeScript, dan Tailwind CSS v4. Kriteria kelulusan dapat dikonfigurasi bebas.
         </p>

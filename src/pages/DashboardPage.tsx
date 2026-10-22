@@ -106,7 +106,7 @@ export const DashboardPage: React.FC = () => {
       <header className="space-y-1">
         <div className="flex items-center gap-2 text-xs font-semibold text-primary uppercase tracking-wider">
           <Flame className="h-4 w-4" />
-          <span>Statistik & Evaluasi Belajar KetikPro</span>
+          <span>Statistik & Evaluasi Belajar asailmu</span>
         </div>
         <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-foreground">
           Akurasi dulu, kecepatan menyusul.
@@ -576,7 +576,7 @@ export const DashboardPage: React.FC = () => {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2 font-bold text-foreground text-sm">
             <HelpCircle className="h-4 w-4 text-primary" />
-            <span>Metode Perhitungan Statistik Standar Internasional di KetikPro</span>
+            <span>Metode Perhitungan Statistik Standar Internasional di asailmu</span>
           </div>
           <button
             onClick={() => setShowFormulaInfo((prev) => !prev)}

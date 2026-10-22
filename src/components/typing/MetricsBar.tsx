@@ -188,7 +188,7 @@ export const MetricsBar: React.FC<MetricsBarProps> = ({
           <div className="w-full max-w-lg rounded-2xl border border-border bg-card p-6 shadow-2xl space-y-4">
             <div className="flex items-center justify-between border-b border-border pb-3">
               <h3 className="text-base font-bold text-foreground">
-                Metode Perhitungan Statistik & Evaluasi KetikPro
+                Metode Perhitungan Statistik & Evaluasi asailmu
               </h3>
               <button
                 onClick={() => setShowFormulaModal(false)}
@@ -241,7 +241,7 @@ export const MetricsBar: React.FC<MetricsBarProps> = ({
                   🎯 Prinsip Utama: Akurasi Dulu, Kecepatan Menyusul
                 </div>
                 <p>
-                  Memori otot 10 jari terbentuk dari <i>gerakan yang benar berulang-ulang</i>. Jika Anda mengetik cepat dengan banyak salah, Anda justru melatih jari merekam kesalahan. KetikPro memprioritaskan akurasi di atas 95% sebelum Anda dianjurkan meningkatkan tempo.
+                  Memori otot 10 jari terbentuk dari <i>gerakan yang benar berulang-ulang</i>. Jika Anda mengetik cepat dengan banyak salah, Anda justru melatih jari merekam kesalahan. asailmu memprioritaskan akurasi di atas 95% sebelum Anda dianjurkan meningkatkan tempo.
                 </p>
               </div>
             </div>

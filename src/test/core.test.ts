@@ -504,4 +504,24 @@ describe('Sistem Statistik dan Evaluasi (WPM, CPM, Akurasi, Prioritas, & Remedia
     expect(drill.text.toLowerCase()).toContain('r');
     expect(drill.text.toLowerCase()).toContain('k');
   });
+
+  describe('Home Row: Posisi Dasar Jari Tangan Specification', () => {
+    it('Memvalidasi pemetaan posisi tuts Home Row tangan kiri: A (kelingking), S (manis), D (tengah), F (telunjuk)', () => {
+      expect(fingerMap['a']).toBe(0); // Kelingking Kiri
+      expect(fingerMap['s']).toBe(1); // Manis Kiri
+      expect(fingerMap['d']).toBe(2); // Tengah Kiri
+      expect(fingerMap['f']).toBe(3); // Telunjuk Kiri
+    });
+
+    it('Memvalidasi pemetaan posisi tuts Home Row tangan kanan: J (telunjuk), K (tengah), L (manis), ; (kelingking)', () => {
+      expect(fingerMap['j']).toBe(5); // Telunjuk Kanan
+      expect(fingerMap['k']).toBe(6); // Tengah Kanan
+      expect(fingerMap['l']).toBe(7); // Manis Kanan
+      expect(fingerMap[';']).toBe(8); // Kelingking Kanan
+    });
+
+    it('Memvalidasi tombol spasi untuk kedua ibu jari', () => {
+      expect(fingerMap[' ']).toBe(4); // Ibu Jari
+    });
+  });
 });
