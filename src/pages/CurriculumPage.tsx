@@ -10,10 +10,119 @@ import {
   Trophy,
   ChevronDown,
   ChevronUp,
+  Monitor,
+  PackageOpen,
+  Search,
+  Timer,
+  Gamepad2,
+  Home,
+  Hand,
+  Keyboard,
 } from 'lucide-react';
 import { curriculum, defaultPassCriteria } from '@/core/constants/curriculum';
 import { useUserProgress } from '@/hooks/useUserProgress';
 import { LevelOneGuide } from '@/components/keyboard/LevelOneGuide';
+
+function getLessonVisual(title: string, keys: string) {
+  const lower = title.toLowerCase();
+  if (lower.includes('intro') || lower.includes('qwerty') || lower.includes('posisi duduk')) {
+    return { type: 'intro' as const };
+  }
+  if (lower.includes('space') || lower.includes('spasi')) {
+    return { type: 'space' as const };
+  }
+  if (lower.includes('review') || lower.includes('ulasan') || lower.includes('uji')) {
+    return { type: 'review' as const };
+  }
+  if (lower.includes('practice') || lower.includes('latihan') || lower.includes('tes')) {
+    return { type: 'practice' as const };
+  }
+  if (lower.includes('play') || lower.includes('game') || lower.includes('tantangan')) {
+    return { type: 'play' as const };
+  }
+  if (lower.includes('sweet home') || lower.includes('rumah')) {
+    return { type: 'home' as const };
+  }
+  if (lower.includes('l hand') || lower.includes('tangan kiri')) {
+    return { type: 'hand-left' as const };
+  }
+  if (lower.includes('r hand') || lower.includes('tangan kanan')) {
+    return { type: 'hand-right' as const };
+  }
+  if (lower.startsWith('keys') || lower.includes('tombol') || keys) {
+    const cleanKeys = (keys || '').replace(/\s+/g, '');
+    const displayKeys = cleanKeys ? cleanKeys.slice(0, 4) : 'Abc';
+    return { type: 'keys' as const, display: displayKeys };
+  }
+  return { type: 'default' as const };
+}
+
+function renderVisual(v: ReturnType<typeof getLessonVisual>) {
+  switch (v.type) {
+    case 'intro':
+      return (
+        <div className="relative flex items-center justify-center h-11 w-11 rounded-xl bg-primary/10 text-primary">
+          <Monitor className="h-5 w-5 stroke-[1.8]" />
+          <span className="absolute -top-1 -right-1 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-primary text-[8px] font-black text-primary-foreground shadow-xs">
+            T
+          </span>
+        </div>
+      );
+    case 'space':
+      return (
+        <div className="flex flex-col items-center justify-center h-11">
+          <div className="h-1.5 w-6 rounded-xs border-2 border-foreground/70 bg-muted/40 mb-1 shadow-xs" />
+          <PackageOpen className="h-6 w-6 text-muted-foreground/60 stroke-[1.5]" />
+        </div>
+      );
+    case 'keys':
+      return (
+        <div className="flex flex-col items-center justify-center h-11">
+          <span className="font-mono text-xs font-black tracking-wide text-foreground -mb-0.5">
+            {v.display}
+          </span>
+          <PackageOpen className="h-6 w-6 text-muted-foreground/60 stroke-[1.5]" />
+        </div>
+      );
+    case 'review':
+      return (
+        <div className="flex items-center justify-center h-11 w-11 text-muted-foreground/70">
+          <Search className="h-6 w-6 stroke-[1.8]" />
+        </div>
+      );
+    case 'practice':
+      return (
+        <div className="flex items-center justify-center h-11 w-11 text-muted-foreground/70">
+          <Timer className="h-6 w-6 stroke-[1.8]" />
+        </div>
+      );
+    case 'play':
+      return (
+        <div className="flex items-center justify-center h-11 w-11 text-amber-500">
+          <Gamepad2 className="h-6 w-6 stroke-[1.8]" />
+        </div>
+      );
+    case 'home':
+      return (
+        <div className="flex items-center justify-center h-11 w-11 text-primary">
+          <Home className="h-6 w-6 stroke-[1.8]" />
+        </div>
+      );
+    case 'hand-left':
+    case 'hand-right':
+      return (
+        <div className="flex items-center justify-center h-11 w-11 text-primary">
+          <Hand className="h-6 w-6 stroke-[1.8]" />
+        </div>
+      );
+    default:
+      return (
+        <div className="flex items-center justify-center h-11 w-11 text-muted-foreground/70">
+          <Keyboard className="h-6 w-6 stroke-[1.8]" />
+        </div>
+      );
+  }
+}
 
 export const CurriculumPage: React.FC = () => {
   const { unlocked, passed, getBestStars, criteria } = useUserProgress();
@@ -79,7 +188,7 @@ export const CurriculumPage: React.FC = () => {
         >
           <span className="flex items-center gap-2 text-primary">
             <Sparkles className="h-4 w-4" />
-            <span>Panduan Level 1: Pengenalan Keyboard, Postur, & Penanda F/J</span>
+            <span>Panduan Level 1: Home Row, Postur, & Penanda F/J</span>
           </span>
           <span className="inline-flex items-center gap-1 text-xs text-muted-foreground font-normal">
             {showLevelOneGuide ? 'Sembunyikan Panduan' : 'Tampilkan Panduan'}
@@ -125,80 +234,79 @@ export const CurriculumPage: React.FC = () => {
 
               {/* Lessons Grid */}
               <div
-                className={`grid gap-3.5 sm:grid-cols-2 lg:grid-cols-3 ${
+                className={`grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3.5 sm:gap-4 ${
                   isOpen ? '' : 'pointer-events-none opacity-45'
                 }`}
               >
-                {lv.lessons.map((lesson) => {
+                {lv.lessons.map((lesson, idx) => {
                   const isDone = passed.has(lesson.id);
                   const stars = getBestStars(lesson.id);
+                  const lessonNum = String(idx + 1).padStart(2, '0');
+                  const visual = getLessonVisual(lesson.title, lesson.keys);
+
+                  const isFirstUnfinished =
+                    isOpen &&
+                    !isDone &&
+                    (idx === 0 || passed.has(lv.lessons[idx - 1]!.id));
 
                   return (
                     <Link
                       key={lesson.id}
                       to={`/latihan/${lesson.id}`}
-                      className="group relative flex flex-col justify-between rounded-2xl border border-border bg-card p-5 shadow-card hover:-translate-y-1 hover:border-primary/60 transition-all duration-200"
+                      title={`${lesson.title}\n${lesson.desc}`}
+                      className={`group relative flex flex-col justify-between rounded-2xl border bg-card p-3.5 shadow-card hover:-translate-y-1 hover:border-primary/60 transition-all duration-200 min-h-[148px] ${
+                        isFirstUnfinished
+                          ? 'ring-2 ring-foreground/90 dark:ring-primary border-foreground/80 dark:border-primary/80 shadow-md'
+                          : 'border-border'
+                      }`}
                     >
-                      <div>
-                        {/* Top bar with Lesson ID and Stars */}
-                        <div className="flex items-center justify-between">
-                          <span className="flex items-center gap-1.5 font-mono text-xs font-semibold text-muted-foreground group-hover:text-primary transition-colors">
-                            <span>Pelajaran {lesson.id}</span>
-                            {isDone && <Check className="h-4 w-4 text-success" />}
-                          </span>
-
-                          <div className="flex items-center gap-0.5">
-                            {[0, 1, 2].map((starIdx) => (
-                              <Star
-                                key={starIdx}
-                                className={`h-3.5 w-3.5 ${
-                                  starIdx < stars
-                                    ? 'fill-primary text-primary'
-                                    : 'text-border stroke-1'
-                                }`}
-                              />
-                            ))}
-                          </div>
-                        </div>
-
-                        {/* Title and description */}
-                        <h3 className="mt-2 text-base font-bold text-foreground group-hover:text-primary transition-colors">
-                          {lesson.title}
-                        </h3>
-                        <p className="mt-1 text-xs text-muted-foreground line-clamp-2">
-                          {lesson.desc}
-                        </p>
+                      {/* Top Bar: Number 01-23 and Lock if locked */}
+                      <div className="flex items-center justify-between w-full">
+                        <span className="font-mono text-xs font-black text-muted-foreground group-hover:text-primary transition-colors">
+                          {lessonNum}
+                        </span>
+                        {!isOpen && (
+                          <Lock className="h-3.5 w-3.5 text-muted-foreground/60" />
+                        )}
                       </div>
 
-                      {/* Keys badges & special badges */}
-                      <div className="mt-4 flex flex-wrap items-center gap-1 pt-2 border-t border-border/50">
-                        {lesson.blind && (
-                          <span className="rounded bg-indigo-500/10 border border-indigo-500/20 px-1.5 py-0.5 text-[10px] font-bold text-indigo-500 uppercase">
-                            Tanpa Petunjuk
-                          </span>
-                        )}
-                        {lesson.correction && (
-                          <span className="rounded bg-rose-500/10 border border-rose-500/20 px-1.5 py-0.5 text-[10px] font-bold text-rose-500 uppercase">
-                            Wajib Backspace
-                          </span>
-                        )}
-                        {lesson.timeLimit && (
-                          <span className="rounded bg-amber-500/10 border border-amber-500/20 px-1.5 py-0.5 text-[10px] font-bold text-amber-500 uppercase">
-                            Waktu {lesson.timeLimit / 60}m
-                          </span>
-                        )}
-                        {lesson.keys &&
-                          lesson.keys
-                            .split('')
-                            .slice(0, 8)
-                            .map((k, idx) => (
-                              <kbd
-                                key={idx}
-                                className="rounded border border-border bg-muted/60 px-1.5 py-0.5 font-mono text-[11px] uppercase font-semibold text-foreground"
-                              >
-                                {k === ' ' ? 'Spasi' : k}
-                              </kbd>
-                            ))}
+                      {/* Center Illustration */}
+                      <div className="flex flex-col items-center justify-center my-1.5 flex-1">
+                        {renderVisual(visual)}
+
+                        {/* Status Checkmark or Stars */}
+                        <div className="mt-1 flex items-center justify-center min-h-[18px]">
+                          {isDone ? (
+                            stars > 0 ? (
+                              <div className="flex items-center gap-0.5">
+                                {[1, 2, 3, 4, 5].map((s) => (
+                                  <Star
+                                    key={s}
+                                    className={`h-2.5 w-2.5 ${
+                                      s <= (stars > 2 ? 5 : stars * 2)
+                                        ? 'fill-amber-400 text-amber-400'
+                                        : 'text-border stroke-1'
+                                    }`}
+                                  />
+                                ))}
+                              </div>
+                            ) : (
+                              <div className="grid h-4.5 w-4.5 place-items-center rounded-full bg-emerald-500 text-white shadow-xs">
+                                <Check className="h-3 w-3 stroke-[3]" />
+                              </div>
+                            )
+                          ) : null}
+                        </div>
+                      </div>
+
+                      {/* Bottom Title */}
+                      <div className="pt-2 border-t border-border/50 w-full text-center">
+                        <h4
+                          className="text-[11px] sm:text-xs font-bold text-foreground group-hover:text-primary transition-colors truncate"
+                          title={lesson.title}
+                        >
+                          {lesson.title}
+                        </h4>
                       </div>
                     </Link>
                   );

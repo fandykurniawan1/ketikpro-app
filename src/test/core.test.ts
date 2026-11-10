@@ -41,20 +41,58 @@ describe('Struktur Kurikulum 10 Level Lengkap', () => {
     expect(curriculum.map((l) => l.level)).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
   });
 
-  it('Level 1 mencakup Pengenalan Keyboard, Ergonomi, Fungsi Jari, Penanda F & J, dan Home Row', () => {
+  it('Level 1 mencakup Home Row lengkap (23 pelajaran: F & J, Spasi, D & K, S & L, A & ;, First 8 Keys, G & H, hingga Play Home Row)', () => {
     const lvl1 = curriculum[0]!;
-    expect(lvl1.title).toBe('Pengenalan Keyboard');
+    expect(lvl1.title).toBe('Home Row');
+    expect(lvl1.lessons).toHaveLength(23);
     const titles = lvl1.lessons.map((l) => l.title);
-    expect(titles.some((t) => t.includes('QWERTY'))).toBe(true);
-    expect(titles.some((t) => t.includes('Posisi Duduk') || t.includes('Pergelangan'))).toBe(true);
-    expect(titles.some((t) => t.includes('Fungsi Setiap Jari'))).toBe(true);
-    expect(titles.some((t) => t.includes('Tombol Pemandu F dan J') || t.includes('F dan J'))).toBe(true);
-    expect(titles.some((t) => t.includes('Menempatkan Jari') || t.includes('Home Row'))).toBe(true);
+    expect(titles.some((t) => t.includes('Introduction to Typing'))).toBe(true);
+    expect(titles.some((t) => t.includes('Keys f & j'))).toBe(true);
+    expect(titles.some((t) => t.includes('Space Bar'))).toBe(true);
+    expect(titles.some((t) => t.includes('Keys d & k'))).toBe(true);
+    expect(titles.some((t) => t.includes('Keys s & l'))).toBe(true);
+    expect(titles.some((t) => t.includes('Keys a & ;'))).toBe(true);
+    expect(titles.some((t) => t.includes('First 8 Keys'))).toBe(true);
+    expect(titles.some((t) => t.includes('Keys g & h'))).toBe(true);
+    expect(titles.some((t) => t.includes('Home Row Review'))).toBe(true);
+    expect(titles.some((t) => t.includes('Play Home Row'))).toBe(true);
+
+    const lesson12 = lvl1.lessons.find((l) => l.id === '1-2')!;
+    expect(lesson12.title).toBe('Keys f & j');
+    expect(lesson12.keys).toBe('fj');
+    expect(/^[fj]+$/.test(lesson12.text)).toBe(true);
+    expect(lesson12.text.includes(' ')).toBe(false);
+
+    const lesson13 = lvl1.lessons.find((l) => l.id === '1-3')!;
+    expect(lesson13.title).toBe('Space Bar');
+    expect(lesson13.keys).toBe('fj ');
+    expect(lesson13.text.includes(' ')).toBe(true);
+    expect(/^[fj ]+$/.test(lesson13.text)).toBe(true);
+
+    const lesson17 = lvl1.lessons.find((l) => l.id === '1-7')!;
+    expect(lesson17.title).toBe('Practice: d & k');
+    expect(lesson17.text).toContain('ffff ddd jjjj kkkk df df jk jk jjj');
+    expect(/^[fdjk ]+$/.test(lesson17.text)).toBe(true);
+
+    const lesson110 = lvl1.lessons.find((l) => l.id === '1-10')!;
+    expect(lesson110.title).toBe('Review: s & l');
+    expect(lesson110.text).toBe('ll ss ssll slsl lsssl slls lsll ssl llss ssll slsl llsslsll ssl ssll slsl lsll ll');
+    expect(/^[sl ]+$/.test(lesson110.text)).toBe(true);
+
+    const lesson111 = lvl1.lessons.find((l) => l.id === '1-11')!;
+    expect(lesson111.title).toBe('Practice: s & l');
+    expect(lesson111.text).toBe('jj ff kk dd ll ssssd df fj jk kl sdfsk dl ks jf kd lslfl kl js kd jf sdfllk kkj jjf');
+    expect(/^[sldkfj ]+$/.test(lesson111.text)).toBe(true);
+
+    const lesson112 = lvl1.lessons.find((l) => l.id === '1-12')!;
+    expect(lesson112.title).toBe('Keys a & ;');
+    expect(lesson112.desc).toContain('Tekan tombol huruf a menggunakan jari kelingking tangan kiri');
+    expect(lesson112.desc).toContain('Tekan tombol titik koma (;) menggunakan jari kelingking tangan kanan');
   });
 
-  it('Level 2 mencakup latihan tombol Home Row: A S D F J K L ;', () => {
+  it('Level 2 mencakup latihan lanjutan tombol Home Row: A S D F J K L ;', () => {
     const lvl2 = curriculum[1]!;
-    expect(lvl2.title).toBe('Home Row');
+    expect(lvl2.title).toContain('Home Row');
     const lessonKeys = lvl2.lessons.map((l) => l.keys).join('');
     expect(lessonKeys).toContain('asdf');
     expect(lessonKeys).toContain('jkl;');

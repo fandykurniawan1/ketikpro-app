@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Lock, BookOpen, Sparkles, ChevronDown, ChevronUp } from 'lucide-react';
 import { allLessons, levelOf, defaultPassCriteria } from '@/core/constants/curriculum';
@@ -11,6 +11,7 @@ import { MetricsBar } from '@/components/typing/MetricsBar';
 import { TypingDisplay } from '@/components/typing/TypingDisplay';
 import { ResultDialog } from '@/components/typing/ResultDialog';
 import { LevelOneGuide } from '@/components/keyboard/LevelOneGuide';
+import { BalloonNinjaGame } from '@/components/game/BalloonNinjaGame';
 import type { Stats } from '@/types/typing';
 
 export const LessonPage: React.FC = () => {
@@ -31,6 +32,13 @@ export const LessonPage: React.FC = () => {
   const [showHints, setShowHints] = useState(!lesson?.blind);
   const [sessionKey, setSessionKey] = useState(0);
   const [showLevelOneReference, setShowLevelOneReference] = useState(false);
+
+  const isPlayLesson = lesson?.title.toLowerCase().includes('play') || false;
+  const [useGameMode, setUseGameMode] = useState<boolean>(() => isPlayLesson);
+
+  useEffect(() => {
+    setUseGameMode(lesson?.title.toLowerCase().includes('play') || false);
+  }, [lesson?.id, lesson?.title]);
 
   const handleFinish = React.useCallback(
     (stats: Stats, weakKeys: Record<string, number>) => {
@@ -100,6 +108,7 @@ export const LessonPage: React.FC = () => {
     triggerKeySound,
     triggerErrorSound,
     triggerSuccessSound,
+    disabled: isPlayLesson && useGameMode,
   });
 
   if (!lesson) {
@@ -149,10 +158,39 @@ export const LessonPage: React.FC = () => {
           </div>
         </div>
 
-        <div className="hidden sm:block text-right">
-          <div className="text-xs text-muted-foreground">Target Kelulusan:</div>
-          <div className="text-xs font-semibold text-foreground">
-            Akurasi ≥ {currentCriteria.minAccuracy}%{currentCriteria.minWpm > 0 ? ` · ≥ ${currentCriteria.minWpm} WPM` : ''}
+        <div className="flex items-center gap-3">
+          {isPlayLesson && (
+            <div className="flex items-center gap-1 bg-muted/60 p-1 rounded-xl border border-border text-xs font-semibold">
+              <button
+                onClick={() => setUseGameMode(true)}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all ${
+                  useGameMode
+                    ? 'bg-primary text-primary-foreground shadow-xs font-bold'
+                    : 'text-muted-foreground hover:text-foreground'
+                }`}
+                title="Mainkan game balon ninja interaktif"
+              >
+                <span>🎈 Mode Game</span>
+              </button>
+              <button
+                onClick={() => setUseGameMode(false)}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all ${
+                  !useGameMode
+                    ? 'bg-primary text-primary-foreground shadow-xs font-bold'
+                    : 'text-muted-foreground hover:text-foreground'
+                }`}
+                title="Beralih ke mode pengetikan teks klasik"
+              >
+                <span>⌨️ Mode Teks</span>
+              </button>
+            </div>
+          )}
+
+          <div className="hidden sm:block text-right">
+            <div className="text-xs text-muted-foreground">Target Kelulusan:</div>
+            <div className="text-xs font-semibold text-foreground">
+              Akurasi ≥ {currentCriteria.minAccuracy}%{currentCriteria.minWpm > 0 ? ` · ≥ ${currentCriteria.minWpm} WPM` : ''}
+            </div>
           </div>
         </div>
       </div>
@@ -220,6 +258,24 @@ export const LessonPage: React.FC = () => {
           onNext={nextLesson ? handleNext : undefined}
           onBackToCurriculum={() => navigate('/belajar')}
         />
+      ) : isPlayLesson && useGameMode ? (
+        <div key={sessionKey} className="space-y-6">
+          <BalloonNinjaGame
+            lesson={lesson}
+            onFinish={handleFinish}
+            onExit={() => navigate('/belajar')}
+            onSwitchToClassic={() => setUseGameMode(false)}
+          />
+
+          {/* Virtual Keyboard visual guide below the game */}
+          {showHints && !lesson.blind && (
+            <VirtualKeyboard
+              nextChar=""
+              hit={null}
+              initialMode="keyboard-only"
+            />
+          )}
+        </div>
       ) : (
         <div key={sessionKey} className="space-y-6">
           {/* Home row guide if specified */}

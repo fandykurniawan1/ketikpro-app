@@ -12,6 +12,7 @@ interface UseTypingSessionOptions {
   triggerKeySound?: () => void;
   triggerErrorSound?: () => void;
   triggerSuccessSound?: () => void;
+  disabled?: boolean;
 }
 
 // List of non-printable keys to explicitly ignore
@@ -48,6 +49,7 @@ export function useTypingSession({
   triggerKeySound,
   triggerErrorSound,
   triggerSuccessSound,
+  disabled = false,
 }: UseTypingSessionOptions) {
   const [typed, setTyped] = useState('');
   const [errors, setErrors] = useState(0);
@@ -252,8 +254,8 @@ export function useTypingSession({
   // Keyboard handler
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Ignore if session is completed
-      if (isDone) return;
+      // Ignore if session is completed or disabled
+      if (isDone || disabled) return;
 
       // Handle Escape to toggle pause
       if (e.key === 'Escape') {
@@ -372,6 +374,7 @@ export function useTypingSession({
     isStarted,
     isPaused,
     isDone,
+    disabled,
     correction,
     firstWrong,
     resumeSession,

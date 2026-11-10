@@ -594,10 +594,10 @@ export const HomeRowPage: React.FC = () => {
             </div>
 
             <Link
-              to="/latihan/2-1"
+              to="/latihan/1-1"
               className="inline-flex items-center gap-2 rounded-xl bg-success text-success-foreground px-5 py-2.5 text-xs font-bold hover:opacity-90 transition-opacity shadow-sm shrink-0"
             >
-              <span>Mulai Latihan Level 2</span>
+              <span>Mulai Latihan Home Row (Level 1)</span>
               <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
@@ -659,10 +659,10 @@ export const HomeRowPage: React.FC = () => {
           </Link>
 
           <Link
-            to="/latihan/2-1"
+            to="/latihan/1-1"
             className="inline-flex items-center gap-2 rounded-xl bg-primary text-primary-foreground px-5 py-2.5 text-xs font-bold hover:opacity-90 transition-opacity shadow-sm"
           >
-            <span>Latihan Home Row di Kurikulum (Level 2)</span>
+            <span>Latihan Home Row di Kurikulum (Level 1)</span>
             <ArrowRight className="h-4 w-4" />
           </Link>
         </div>

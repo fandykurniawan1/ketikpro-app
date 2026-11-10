@@ -111,11 +111,11 @@ export const LevelOneGuide: React.FC = () => {
             Panduan Lengkap Level 1
           </span>
           <h3 className="text-xl font-extrabold text-foreground mt-1">
-            Fondasi Pengenalan Keyboard & Ergonomi
+            Fondasi Home Row & Ergonomi
           </h3>
         </div>
         <p className="text-xs text-muted-foreground sm:text-right max-w-xs">
-          Pelajari 5 fondasi utama sebelum memulai latihan pelajaran Level 1.
+          Pelajari 5 fondasi utama sebelum memulai latihan pelajaran Home Row (Level 1).
         </p>
       </div>
 

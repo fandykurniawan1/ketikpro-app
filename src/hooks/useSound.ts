@@ -1,6 +1,12 @@
 import { useState, useCallback } from 'react';
 import { loadSoundPreference, saveSoundPreference, type SoundTheme } from '@/core/storage/progressStorage';
-import { playKeySound, playErrorSound, playSuccessSound } from '@/core/engine/soundEngine';
+import {
+  playKeySound,
+  playErrorSound,
+  playSuccessSound,
+  playBalloonPopSound,
+  playShurikenThrowSound,
+} from '@/core/engine/soundEngine';
 
 export function useSound() {
   const [soundTheme, setSoundTheme] = useState<SoundTheme>(loadSoundPreference);
@@ -29,11 +35,25 @@ export function useSound() {
     }
   }, [soundTheme]);
 
+  const triggerBalloonPopSound = useCallback(() => {
+    if (soundTheme !== 'off') {
+      playBalloonPopSound();
+    }
+  }, [soundTheme]);
+
+  const triggerShurikenThrowSound = useCallback(() => {
+    if (soundTheme !== 'off') {
+      playShurikenThrowSound();
+    }
+  }, [soundTheme]);
+
   return {
     soundTheme,
     changeSoundTheme,
     triggerKeySound,
     triggerErrorSound,
     triggerSuccessSound,
+    triggerBalloonPopSound,
+    triggerShurikenThrowSound,
   };
 }

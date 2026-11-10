@@ -18,6 +18,36 @@ interface HomeRowGuideProps {
   activeChar?: string;
 }
 
+const getActiveCharPrompt = (char: string): string => {
+  const c = char.toLowerCase();
+  switch (c) {
+    case 'a':
+      return 'Tekan tombol huruf a menggunakan jari kelingking tangan kiri.';
+    case ';':
+      return 'Tekan tombol titik koma (;) menggunakan jari kelingking tangan kanan.';
+    case 's':
+      return 'Tekan tombol huruf s menggunakan jari manis tangan kiri.';
+    case 'l':
+      return 'Tekan tombol huruf l menggunakan jari manis tangan kanan.';
+    case 'd':
+      return 'Tekan tombol huruf d menggunakan jari tengah tangan kiri.';
+    case 'k':
+      return 'Tekan tombol huruf k menggunakan jari tengah tangan kanan.';
+    case 'f':
+      return 'Tekan tombol huruf f menggunakan jari telunjuk tangan kiri.';
+    case 'j':
+      return 'Tekan tombol huruf j menggunakan jari telunjuk tangan kanan.';
+    case 'g':
+      return 'Tekan tombol huruf g menggunakan jari telunjuk tangan kiri (jangkau ke tengah).';
+    case 'h':
+      return 'Tekan tombol huruf h menggunakan jari telunjuk tangan kanan (jangkau ke tengah).';
+    case ' ':
+      return 'Tekan tombol Spasi menggunakan ibu jari.';
+    default:
+      return `Tekan tombol "${char}" sesuai posisi jari pemandu.`;
+  }
+};
+
 export const HomeRowGuide: React.FC<HomeRowGuideProps> = ({ activeChar }) => {
   const renderHand = (
     title: string,
@@ -89,6 +119,31 @@ export const HomeRowGuide: React.FC<HomeRowGuideProps> = ({ activeChar }) => {
           rightHand
         )}
       </div>
+
+      {/* Interactive Space Bar Key Indicator */}
+      <div className="flex justify-center pt-0.5">
+        <div
+          data-active={activeChar === ' ' ? 'true' : undefined}
+          className={`key-cap flex h-9 sm:h-10 w-48 sm:w-64 items-center justify-center rounded-xl font-mono text-xs uppercase font-bold transition-all shadow-xs ${
+            activeChar === ' '
+              ? 'border-primary bg-primary text-primary-foreground scale-105 shadow-md ring-2 ring-primary ring-offset-1'
+              : 'border-border/80 bg-muted/40 text-muted-foreground'
+          }`}
+          style={{ ['--finger' as string]: `var(--finger-4)` }}
+        >
+          <span>␣ SPASI (Ibu Jari)</span>
+        </div>
+      </div>
+
+      {/* Dynamic Key Instruction Banner */}
+      {activeChar && (
+        <div className="flex items-center justify-center pt-1 animate-in fade-in duration-150">
+          <div className="inline-flex items-center gap-2 rounded-xl bg-primary/10 border border-primary/25 px-4 py-2 text-xs font-semibold text-primary shadow-xs">
+            <span className="inline-block h-2 w-2 rounded-full bg-primary animate-ping" />
+            <span>{getActiveCharPrompt(activeChar)}</span>
+          </div>
+        </div>
+      )}
 
       <div className="flex flex-wrap items-center justify-center gap-2 pt-1 text-center text-xs text-muted-foreground">
         <span className="inline-flex items-center gap-1.5 rounded-md bg-muted px-2 py-0.5 font-medium text-foreground">
