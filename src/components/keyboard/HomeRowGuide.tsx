@@ -1,21 +1,10 @@
 import React from 'react';
 
-const leftHand = [
-  ['a', 0, 'Kelingking', false],
-  ['s', 1, 'Manis', false],
-  ['d', 2, 'Tengah', false],
-  ['f', 3, 'Telunjuk', true], // has tactile bump
-] as const;
-
-const rightHand = [
-  ['j', 5, 'Telunjuk', true], // has tactile bump
-  ['k', 6, 'Tengah', false],
-  ['l', 7, 'Manis', false],
-  [';', 8, 'Kelingking', false],
-] as const;
-
 interface HomeRowGuideProps {
   activeChar?: string;
+  highlightNewKeys?: string[];
+  focusHand?: 'left' | 'right' | 'both';
+  includeCenterKeys?: boolean;
 }
 
 const getActiveCharPrompt = (char: string): string => {
@@ -48,12 +37,39 @@ const getActiveCharPrompt = (char: string): string => {
   }
 };
 
-export const HomeRowGuide: React.FC<HomeRowGuideProps> = ({ activeChar }) => {
+export const HomeRowGuide: React.FC<HomeRowGuideProps> = ({
+  activeChar,
+  highlightNewKeys,
+  focusHand = 'both',
+  includeCenterKeys = false,
+}) => {
+  const showCenter =
+    includeCenterKeys ||
+    Boolean(highlightNewKeys?.some((k) => k.toLowerCase() === 'g' || k.toLowerCase() === 'h')) ||
+    activeChar?.toLowerCase() === 'g' ||
+    activeChar?.toLowerCase() === 'h';
+
+  const leftHand: [string, number, string, boolean, boolean][] = [
+    ['a', 0, 'Kelingking', false, false],
+    ['s', 1, 'Manis', false, false],
+    ['d', 2, 'Tengah', false, false],
+    ['f', 3, 'Telunjuk', true, false], // has tactile bump
+    ...(showCenter ? ([['g', 3, 'Jangkau', false, true]] as [string, number, string, boolean, boolean][]) : []),
+  ];
+
+  const rightHand: [string, number, string, boolean, boolean][] = [
+    ...(showCenter ? ([['h', 5, 'Jangkau', false, true]] as [string, number, string, boolean, boolean][]) : []),
+    ['j', 5, 'Telunjuk', true, false], // has tactile bump
+    ['k', 6, 'Tengah', false, false],
+    ['l', 7, 'Manis', false, false],
+    [';', 8, 'Kelingking', false, false],
+  ];
+
   const renderHand = (
     title: string,
     subtitle: string,
     themeClasses: string,
-    keys: typeof leftHand | typeof rightHand
+    keys: typeof leftHand
   ) => (
     <div className={`flex-1 rounded-2xl border p-4 shadow-sm transition-all ${themeClasses}`}>
       <div className="mb-1 text-center">
@@ -62,14 +78,16 @@ export const HomeRowGuide: React.FC<HomeRowGuideProps> = ({ activeChar }) => {
         </span>
         <span className="block text-[11px] text-muted-foreground">{subtitle}</span>
       </div>
-      <div className="flex justify-center gap-2 sm:gap-2.5 pt-2">
-        {keys.map(([k, f, name, hasBump]) => {
+      <div className="flex justify-center gap-1.5 sm:gap-2.5 pt-2">
+        {keys.map(([k, f, name, hasBump, isReach]) => {
           const isActive = activeChar?.toLowerCase() === k;
+          const isNewKey = Boolean(highlightNewKeys && highlightNewKeys.includes(k));
+
           return (
             <div key={k} className="flex flex-col items-center gap-1.5">
               <div
                 data-active={isActive ? 'true' : undefined}
-                className="finger-pillar w-7 rounded-t-full"
+                className="finger-pillar w-6 sm:w-7 rounded-t-full"
                 style={{
                   height: f === 0 || f === 8 ? 40 : f === 2 || f === 6 ? 58 : 50,
                   ['--finger' as string]: `var(--finger-${f})`,
@@ -77,18 +95,40 @@ export const HomeRowGuide: React.FC<HomeRowGuideProps> = ({ activeChar }) => {
               />
               <div
                 data-active={isActive ? 'true' : undefined}
-                className="key-cap relative flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-xl font-mono text-sm uppercase font-bold shadow-xs"
+                className={`key-cap relative flex h-9 w-9 sm:h-11 sm:w-11 items-center justify-center rounded-xl font-mono text-sm uppercase font-bold shadow-xs transition-all ${
+                  isNewKey && !isActive
+                    ? 'ring-2 ring-rose-500/70 scale-105'
+                    : isReach && !isActive
+                    ? 'border-dashed border-border/80 opacity-90'
+                    : ''
+                }`}
                 style={{ ['--finger' as string]: `var(--finger-${f})` }}
               >
                 <span>{k}</span>
                 {hasBump && (
                   <span
-                    className="absolute bottom-1 h-1 w-3.5 rounded-full bg-primary ring-1 ring-background"
+                    className="absolute bottom-1 h-1 w-3 sm:w-3.5 rounded-full bg-primary ring-1 ring-background"
                     title="Tonjolan taktil pemandu F/J"
                   />
                 )}
+                {isNewKey && !isActive && (
+                  <span
+                    className="absolute -top-1.5 -left-1 flex items-center justify-center rounded-md bg-rose-500 px-1 py-0.2 text-[7px] font-sans font-black text-white shadow-xs uppercase ring-1 ring-background"
+                    title="Tombol Baru"
+                  >
+                    Baru
+                  </span>
+                )}
+                {isReach && !isNewKey && (
+                  <span
+                    className="absolute -top-1 right-0 text-[8px] text-muted-foreground/70"
+                    title="Tuts Jangkauan Tengah"
+                  >
+                    ✦
+                  </span>
+                )}
               </div>
-              <span className="text-[10px] text-muted-foreground font-semibold">{name}</span>
+              <span className="text-[9px] sm:text-[10px] text-muted-foreground font-semibold">{name}</span>
             </div>
           );
         })}
@@ -101,21 +141,43 @@ export const HomeRowGuide: React.FC<HomeRowGuideProps> = ({ activeChar }) => {
       <div className="flex items-center justify-between text-xs font-bold uppercase tracking-wider text-primary border-b border-border/50 pb-2">
         <span>Pembagian Wilayah Jari Tangan Kiri & Kanan (Home Row)</span>
         <span className="text-muted-foreground normal-case font-normal text-[11px] hidden sm:inline">
-          Fondasi 10 Jari
+          {showCenter ? '10 Tuts Lengkap (Termasuk Jangkauan G & H)' : 'Fondasi 10 Jari'}
         </span>
       </div>
 
       <div className="flex flex-col gap-3.5 sm:flex-row">
         {renderHand(
-          'Tangan Kiri (A - S - D - F)',
-          'Kelingking, Manis, Tengah, Telunjuk',
-          'border-primary/20 bg-primary/5',
+          focusHand === 'left'
+            ? 'Tangan Kiri (Fokus Latihan Aktif)'
+            : showCenter
+            ? 'Tangan Kiri (A - S - D - F - G)'
+            : 'Tangan Kiri (A - S - D - F)',
+          showCenter
+            ? 'Kelingking, Manis, Tengah, Telunjuk (F & Jangkau G)'
+            : 'Kelingking, Manis, Tengah, Telunjuk',
+          focusHand === 'left'
+            ? 'border-primary ring-2 ring-primary/40 bg-primary/10 shadow-sm'
+            : focusHand === 'right'
+            ? 'border-border/60 bg-muted/20 opacity-60'
+            : 'border-primary/20 bg-primary/5',
           leftHand
         )}
         {renderHand(
-          'Tangan Kanan (J - K - L - ;)',
-          'Telunjuk, Tengah, Manis, Kelingking',
-          'border-amber-500/20 bg-amber-500/5',
+          focusHand === 'right'
+            ? 'Tangan Kanan (Fokus Latihan Aktif)'
+            : focusHand === 'left'
+            ? 'Tangan Kanan (Posisi Standby)'
+            : showCenter
+            ? 'Tangan Kanan (H - J - K - L - ;)'
+            : 'Tangan Kanan (J - K - L - ;)',
+          showCenter
+            ? 'Telunjuk (Jangkau H & J), Tengah, Manis, Kelingking'
+            : 'Telunjuk, Tengah, Manis, Kelingking',
+          focusHand === 'right'
+            ? 'border-amber-500 ring-2 ring-amber-500/40 bg-amber-500/10 shadow-sm'
+            : focusHand === 'left'
+            ? 'border-border/60 bg-muted/20 opacity-60'
+            : 'border-amber-500/20 bg-amber-500/5',
           rightHand
         )}
       </div>

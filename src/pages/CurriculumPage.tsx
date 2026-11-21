@@ -32,7 +32,9 @@ function getLessonVisual(title: string, keys: string) {
     return { type: 'space' as const };
   }
   if (lower.includes('review') || lower.includes('ulasan') || lower.includes('uji')) {
-    return { type: 'review' as const };
+    const cleanKeys = (keys || '').replace(/\s+/g, '');
+    const displayKeys = cleanKeys ? cleanKeys.slice(0, 3) : undefined;
+    return { type: 'review' as const, display: displayKeys };
   }
   if (lower.includes('practice') || lower.includes('latihan') || lower.includes('tes')) {
     return { type: 'practice' as const };
@@ -42,6 +44,9 @@ function getLessonVisual(title: string, keys: string) {
   }
   if (lower.includes('sweet home') || lower.includes('rumah')) {
     return { type: 'home' as const };
+  }
+  if (lower.includes('first 8') || lower.includes('8 keys') || lower.includes('8 tuts')) {
+    return { type: 'first8' as const };
   }
   if (lower.includes('l hand') || lower.includes('tangan kiri')) {
     return { type: 'hand-left' as const };
@@ -86,8 +91,13 @@ function renderVisual(v: ReturnType<typeof getLessonVisual>) {
       );
     case 'review':
       return (
-        <div className="flex items-center justify-center h-11 w-11 text-muted-foreground/70">
-          <Search className="h-6 w-6 stroke-[1.8]" />
+        <div className="relative flex flex-col items-center justify-center h-11 w-11 text-muted-foreground/70">
+          <Search className="h-5 w-5 stroke-[1.8]" />
+          {v.display && (
+            <span className="font-mono text-[9px] font-black text-amber-600 dark:text-amber-400 -mt-0.5 uppercase tracking-tighter">
+              {v.display}
+            </span>
+          )}
         </div>
       );
     case 'practice':
@@ -108,11 +118,31 @@ function renderVisual(v: ReturnType<typeof getLessonVisual>) {
           <Home className="h-6 w-6 stroke-[1.8]" />
         </div>
       );
+    case 'first8':
+      return (
+        <div className="relative flex flex-col items-center justify-center h-11 w-11 text-emerald-600 dark:text-emerald-400">
+          <BookOpen className="h-5 w-5 stroke-[1.8]" />
+          <span className="font-mono text-[9px] font-black uppercase tracking-tighter -mt-0.5">
+            8 KATA
+          </span>
+        </div>
+      );
     case 'hand-left':
+      return (
+        <div className="relative flex flex-col items-center justify-center h-11 w-11 text-primary">
+          <Hand className="h-5 w-5 stroke-[1.8]" />
+          <span className="font-mono text-[9px] font-black uppercase tracking-tighter -mt-0.5">
+            L HAND
+          </span>
+        </div>
+      );
     case 'hand-right':
       return (
-        <div className="flex items-center justify-center h-11 w-11 text-primary">
-          <Hand className="h-6 w-6 stroke-[1.8]" />
+        <div className="relative flex flex-col items-center justify-center h-11 w-11 text-amber-500">
+          <Hand className="h-5 w-5 stroke-[1.8]" />
+          <span className="font-mono text-[9px] font-black uppercase tracking-tighter -mt-0.5">
+            R HAND
+          </span>
         </div>
       );
     default:

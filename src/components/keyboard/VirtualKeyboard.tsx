@@ -91,6 +91,7 @@ interface VirtualKeyboardProps {
   hit: HitState | null;
   initialMode?: GuidanceViewMode;
   onKeyClick?: (keyId: string) => void;
+  newKeys?: string[];
 }
 
 export const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({
@@ -98,6 +99,7 @@ export const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({
   hit,
   initialMode = 'full',
   onKeyClick,
+  newKeys,
 }) => {
   const [viewMode, setViewMode] = useState<GuidanceViewMode>(initialMode);
 
@@ -227,6 +229,7 @@ export const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({
                   const isTactileHome = k.id === 'f' || k.id === 'j';
                   const isAnchorKeyToReturn =
                     isAwayFromHome && k.id.toLowerCase() === homeKey?.toLowerCase();
+                  const isNewKey = Boolean(newKeys && newKeys.includes(k.id.toLowerCase()));
 
                   return (
                     <KeyCap
@@ -236,6 +239,7 @@ export const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({
                       isHome={isTactileHome}
                       isAnchorReturn={isAnchorKeyToReturn}
                       hitState={getHitState(k.id)}
+                      isNewKey={isNewKey}
                       onClick={onKeyClick ? () => onKeyClick(k.id) : undefined}
                     />
                   );

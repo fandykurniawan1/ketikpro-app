@@ -7,6 +7,7 @@ interface KeyCapProps {
   isHome?: boolean;
   isAnchorReturn?: boolean;
   hitState?: 'ok' | 'bad';
+  isNewKey?: boolean;
   onClick?: () => void;
 }
 
@@ -16,6 +17,7 @@ export const KeyCap: React.FC<KeyCapProps> = ({
   isHome = false,
   isAnchorReturn = false,
   hitState,
+  isNewKey = false,
   onClick,
 }) => {
   const isLetter = keyDef.label.length === 1 && /[a-zA-Z]/.test(keyDef.label);
@@ -36,10 +38,12 @@ export const KeyCap: React.FC<KeyCapProps> = ({
           ? 'z-20 scale-[1.03] ring-2 ring-primary/80 shadow-md ring-offset-1 ring-offset-background'
           : isAnchorReturn
           ? 'z-10 ring-2 ring-amber-500/70 ring-dashed shadow-xs'
+          : isNewKey
+          ? 'z-10 ring-2 ring-rose-500/80 shadow-xs'
           : 'hover:brightness-105'
       }`}
       style={{ ['--finger' as string]: `var(--finger-${keyDef.finger})` }}
-      title={`${keyDef.label} (Jari: ${keyDef.finger})`}
+      title={`${keyDef.label} (Jari: ${keyDef.finger})${isNewKey ? ' · Tombol Baru' : ''}`}
     >
       {/* Dual legend if subLabel exists (e.g. ! on top of 1) */}
       {keyDef.subLabel ? (
@@ -80,6 +84,16 @@ export const KeyCap: React.FC<KeyCapProps> = ({
           title="Jangkar posisi kembali ke Home Row"
         >
           ⚓
+        </span>
+      )}
+
+      {/* New Key highlight badge for newly introduced keys */}
+      {isNewKey && !isActive && (
+        <span
+          className="absolute -top-1.5 -left-1 flex items-center justify-center rounded-md bg-gradient-to-r from-rose-500 to-amber-500 px-1 py-0.2 text-[8px] font-sans font-black text-white shadow-xs tracking-tighter uppercase ring-1 ring-background"
+          title="Tombol Baru yang Sedang Dipelajari"
+        >
+          Baru
         </span>
       )}
 

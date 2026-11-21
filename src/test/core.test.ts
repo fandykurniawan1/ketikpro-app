@@ -3,6 +3,7 @@ import {
   curriculum,
   keyFor,
   fingerMap,
+  fingerNames,
   defaultPassCriteria,
   criteriaPresets,
 } from '../core/constants/curriculum';
@@ -560,6 +561,284 @@ describe('Sistem Statistik dan Evaluasi (WPM, CPM, Akurasi, Prioritas, & Remedia
 
     it('Memvalidasi tombol spasi untuk kedua ibu jari', () => {
       expect(fingerMap[' ']).toBe(4); // Ibu Jari
+    });
+  });
+
+  describe('Modul 12: Keys a & ; (Alur New Key Introduction)', () => {
+    const lvl1 = curriculum[0]!;
+    const lesson12 = lvl1.lessons.find((l) => l.id === '1-12')!;
+    const lesson13 = lvl1.lessons.find((l) => l.id === '1-13')!;
+    const lesson14 = lvl1.lessons.find((l) => l.id === '1-14')!;
+
+    it('Mendefinisikan modul 12 dengan judul "Keys a & ;" dan penugasan jari kelingking', () => {
+      expect(lesson12.id).toBe('1-12');
+      expect(lesson12.title).toBe('Keys a & ;');
+      expect(lesson12.keys).toBe('a; ');
+      expect(lesson12.desc).toContain('jari kelingking tangan kiri');
+      expect(lesson12.desc).toContain('jari kelingking tangan kanan');
+      expect(fingerMap['a']).toBe(0); // Kelingking kiri
+      expect(fingerMap[';']).toBe(8); // Kelingking kanan
+      expect(keyFor('a')).toEqual({ key: 'a', shift: false });
+      expect(keyFor(';')).toEqual({ key: ';', shift: false });
+    });
+
+    it('Teks latihan modul 12 hanya berisi tuts baru a, ;, dan spasi untuk melatih memori otot', () => {
+      expect(/^[a; ]+$/.test(lesson12.text)).toBe(true);
+      expect(lesson12.text).toContain('a');
+      expect(lesson12.text).toContain(';');
+      expect(lesson12.text).toContain(' ');
+      expect(lesson12.guide).toBe(true);
+    });
+
+    it('Kelanjutan modul terstruktur: 12 (Keys a & ;) -> 13 (Review: a & ;) -> 14 (First 8 Keys)', () => {
+      expect(lesson13.id).toBe('1-13');
+      expect(lesson13.title).toBe('Review: a & ;');
+      expect(lesson13.keys).toContain('a;');
+
+      expect(lesson14.id).toBe('1-14');
+      expect(lesson14.title).toBe('First 8 Keys');
+      expect(lesson14.keys).toContain('asdfjkl;');
+    });
+  });
+
+  describe('Modul 13: Review: a & ; (Alur Review & Pemantapan Koordinasi)', () => {
+    const lvl1 = curriculum[0]!;
+    const lesson13 = lvl1.lessons.find((l) => l.id === '1-13')!;
+
+    it('Mendefinisikan modul 13 dengan ulasan koordinasi 8 tuts Home Row', () => {
+      expect(lesson13.id).toBe('1-13');
+      expect(lesson13.title).toBe('Review: a & ;');
+      expect(lesson13.desc).toContain('Ulasan tombol kelingking luar yang dipadukan dengan tuts home row lainnya');
+      expect(lesson13.keys).toBe('a;sldkfj ');
+      expect(lesson13.guide).toBe(true);
+    });
+
+    it('Teks latihan modul 13 menguji integrasi 8 tuts Home Row dengan kata dan pola ritmis terstruktur', () => {
+      // Seluruh karakter dalam teks latihan harus berasal dari {a, s, d, f, j, k, l, ;, spasi}
+      expect(/^[asdfjkl; ]+$/.test(lesson13.text)).toBe(true);
+      expect(lesson13.text.length).toBeGreaterThan(60);
+
+      // Menguji keberadaan tuts kelingking luar a dan ;
+      expect(lesson13.text).toContain('a;');
+      expect(lesson13.text).toContain(';a');
+      expect(lesson13.text).toContain('asdf');
+      expect(lesson13.text).toContain(';lkj');
+
+      // Menguji keberadaan kata-kata bahasa Indonesia alami yang terbentuk dari 8 tuts Home Row
+      expect(lesson13.text).toContain('ada');
+      expect(lesson13.text).toContain('alas');
+      expect(lesson13.text).toContain('lada');
+      expect(lesson13.text).toContain('salak');
+    });
+
+    it('Memvalidasi penugasan jari seluruh 8 tuts pada modul 13', () => {
+      // Tangan kiri
+      expect(fingerMap['a']).toBe(0); // Kelingking
+      expect(fingerMap['s']).toBe(1); // Manis
+      expect(fingerMap['d']).toBe(2); // Tengah
+      expect(fingerMap['f']).toBe(3); // Telunjuk
+      // Tangan kanan
+      expect(fingerMap['j']).toBe(5); // Telunjuk
+      expect(fingerMap['k']).toBe(6); // Tengah
+      expect(fingerMap['l']).toBe(7); // Manis
+      expect(fingerMap[';']).toBe(8); // Kelingking
+      // Spasi
+      expect(fingerMap[' ']).toBe(4); // Ibu Jari
+    });
+  });
+
+  describe('Modul 14: First 8 Keys (Integrasi Mengetik Kata Pertama)', () => {
+    const lvl1 = curriculum[0]!;
+    const lesson14 = lvl1.lessons.find((l) => l.id === '1-14')!;
+    const lesson15 = lvl1.lessons.find((l) => l.id === '1-15')!;
+
+    it('Mendefinisikan modul 14 dengan 8 tuts lengkap Home Row', () => {
+      expect(lesson14.id).toBe('1-14');
+      expect(lesson14.title).toBe('First 8 Keys');
+      expect(lesson14.desc).toContain('Latihan integrasi lengkap 8 tombol utama home row: A S D F J K L ;');
+      expect(lesson14.keys).toBe('asdfjkl; ');
+      expect(lesson14.guide).toBe(true);
+    });
+
+    it('Teks latihan modul 14 hanya menggunakan karakter valid dari 8 tuts Home Row dan spasi', () => {
+      expect(/^[asdfjkl; ]+$/.test(lesson14.text)).toBe(true);
+      expect(lesson14.text.length).toBeGreaterThan(80);
+
+      // Menguji keberadaan kata-kata utuh bahasa Indonesia berbasis 8 tombol Home Row
+      expect(lesson14.text).toContain('ada');
+      expect(lesson14.text).toContain('saja');
+      expect(lesson14.text).toContain('jasa');
+      expect(lesson14.text).toContain('lada');
+      expect(lesson14.text).toContain('alas');
+      expect(lesson14.text).toContain('kala');
+      expect(lesson14.text).toContain('salak');
+      expect(lesson14.text).toContain('jaksa');
+      expect(lesson14.text).toContain('fasad');
+
+      // Menguji penutupan dan pembukaan ritme 8 tuts
+      expect(lesson14.text).toContain('asdf jkl;');
+    });
+
+    it('Kelanjutan modul terstruktur: 14 (First 8 Keys) -> 15 (Play: First 8 Keys)', () => {
+      expect(lesson15.id).toBe('1-15');
+      expect(lesson15.title).toBe('Play: First 8 Keys');
+      expect(lesson15.keys).toContain('asdfjkl;');
+    });
+  });
+
+  describe('Modul 17: Home Row: L Hand (Isolasi 4 Jari Tangan Kiri)', () => {
+    const lvl1 = curriculum[0]!;
+    const lesson17 = lvl1.lessons.find((l) => l.id === '1-17')!;
+    const lesson18 = lvl1.lessons.find((l) => l.id === '1-18')!;
+
+    it('Mendefinisikan modul 17 dengan isolasi tuts tangan kiri: asdf dan spasi', () => {
+      expect(lesson17.id).toBe('1-17');
+      expect(lesson17.title).toBe('Home Row: L Hand');
+      expect(lesson17.desc).toContain('kelingking (A), manis (S), tengah (D), dan telunjuk (F)');
+      expect(lesson17.keys).toBe('asdf ');
+      expect(lesson17.guide).toBe(true);
+    });
+
+    it('Teks latihan modul 17 murni hanya menggunakan tuts tangan kiri {a, s, d, f} dan spasi', () => {
+      expect(/^[asdf ]+$/.test(lesson17.text)).toBe(true);
+      expect(lesson17.text.length).toBeGreaterThan(80);
+
+      // Menguji keberadaan kata-kata murni tangan kiri
+      expect(lesson17.text).toContain('ada');
+      expect(lesson17.text).toContain('asa');
+      expect(lesson17.text).toContain('dada');
+      expect(lesson17.text).toContain('fasad');
+
+      // Menguji pola roll tangan kiri
+      expect(lesson17.text).toContain('asdf');
+      expect(lesson17.text).toContain('fdsa');
+
+      // Memastikan TIDAK ADA tuts tangan kanan (j, k, l, ;)
+      expect(lesson17.text).not.toContain('j');
+      expect(lesson17.text).not.toContain('k');
+      expect(lesson17.text).not.toContain('l');
+      expect(lesson17.text).not.toContain(';');
+    });
+
+    it('Memvalidasi penugasan 4 jari tangan kiri', () => {
+      expect(fingerMap['a']).toBe(0); // Kelingking Kiri
+      expect(fingerMap['s']).toBe(1); // Manis Kiri
+      expect(fingerMap['d']).toBe(2); // Tengah Kiri
+      expect(fingerMap['f']).toBe(3); // Telunjuk Kiri (Jangkar)
+      expect(fingerNames[0]).toBe('Kelingking kiri');
+      expect(fingerNames[1]).toBe('Manis kiri');
+      expect(fingerNames[2]).toBe('Tengah kiri');
+      expect(fingerNames[3]).toBe('Telunjuk kiri');
+    });
+
+    it('Kelanjutan modul terstruktur: 17 (Home Row: L Hand) -> 18 (Home Row: R Hand)', () => {
+      expect(lesson18.id).toBe('1-18');
+      expect(lesson18.title).toBe('Home Row: R Hand');
+      expect(lesson18.keys).toContain('jkl;');
+    });
+  });
+
+  describe('Modul 18: Home Row: R Hand (Isolasi 4 Jari Tangan Kanan)', () => {
+    const lvl1 = curriculum[0]!;
+    const lesson18 = lvl1.lessons.find((l) => l.id === '1-18')!;
+    const lesson19 = lvl1.lessons.find((l) => l.id === '1-19')!;
+
+    it('Mendefinisikan modul 18 dengan isolasi tuts tangan kanan: jkl; dan spasi', () => {
+      expect(lesson18.id).toBe('1-18');
+      expect(lesson18.title).toBe('Home Row: R Hand');
+      expect(lesson18.desc).toContain('telunjuk (J), tengah (K), manis (L), dan kelingking (;)');
+      expect(lesson18.keys).toBe('jkl; ');
+      expect(lesson18.guide).toBe(true);
+    });
+
+    it('Teks latihan modul 18 murni hanya menggunakan tuts tangan kanan {j, k, l, ;} dan spasi', () => {
+      expect(/^[jkl; ]+$/.test(lesson18.text)).toBe(true);
+      expect(lesson18.text.length).toBeGreaterThan(80);
+
+      // Menguji pola roll dan adjacent pairs tangan kanan
+      expect(lesson18.text).toContain('jkl;');
+      expect(lesson18.text).toContain(';lkj');
+      expect(lesson18.text).toContain('jk kj');
+      expect(lesson18.text).toContain('kl lk');
+      expect(lesson18.text).toContain('l; ;l');
+
+      // Memastikan TIDAK ADA tuts tangan kiri (a, s, d, f) maupun baris lain
+      expect(lesson18.text).not.toContain('a');
+      expect(lesson18.text).not.toContain('s');
+      expect(lesson18.text).not.toContain('d');
+      expect(lesson18.text).not.toContain('f');
+      expect(lesson18.text).not.toContain('g');
+      expect(lesson18.text).not.toContain('h');
+    });
+
+    it('Memvalidasi penugasan 4 jari tangan kanan dan ibu jari', () => {
+      expect(fingerMap['j']).toBe(5); // Telunjuk Kanan (Jangkar)
+      expect(fingerMap['k']).toBe(6); // Tengah Kanan
+      expect(fingerMap['l']).toBe(7); // Manis Kanan
+      expect(fingerMap[';']).toBe(8); // Kelingking Kanan
+      expect(fingerMap[' ']).toBe(4); // Ibu Jari
+
+      expect(fingerNames[5]).toBe('Telunjuk kanan');
+      expect(fingerNames[6]).toBe('Tengah kanan');
+      expect(fingerNames[7]).toBe('Manis kanan');
+      expect(fingerNames[8]).toBe('Kelingking kanan');
+      expect(fingerNames[4]).toBe('Ibu jari');
+    });
+
+    it('Kelanjutan modul terstruktur: 18 (Home Row: R Hand) -> 19 (Keys g & h)', () => {
+      expect(lesson19.id).toBe('1-19');
+      expect(lesson19.title).toBe('Keys g & h');
+      expect(lesson19.keys).toContain('gh');
+    });
+  });
+
+  describe('Modul 19: Keys g & h (New Key Introduction: Jangkau & Kembali)', () => {
+    const lvl1 = curriculum[0]!;
+    const lesson19 = lvl1.lessons.find((l) => l.id === '1-19')!;
+    const lesson20 = lvl1.lessons.find((l) => l.id === '1-20')!;
+
+    it('Mendefinisikan modul 19 dengan perkenalan tombol baru G & H', () => {
+      expect(lesson19.id).toBe('1-19');
+      expect(lesson19.title).toBe('Keys g & h');
+      expect(lesson19.desc).toContain('telunjuk kiri ke G');
+      expect(lesson19.desc).toContain('telunjuk kanan ke H');
+      expect(lesson19.keys).toContain('gh');
+      expect(lesson19.guide).toBe(true);
+    });
+
+    it('Teks latihan modul 19 murni hanya menggunakan tuts g, h, dan spasi', () => {
+      expect(/^[gh ]+$/.test(lesson19.text)).toBe(true);
+      expect(lesson19.text.length).toBeGreaterThan(80);
+
+      // Menguji pola repetisi dan alternasi jangkauan telunjuk kiri & kanan
+      expect(lesson19.text).toContain('g h');
+      expect(lesson19.text).toContain('gg hh');
+      expect(lesson19.text).toContain('gh hg');
+      expect(lesson19.text).toContain('ghg hgh');
+      expect(lesson19.text).toContain('ggg hhh');
+
+      // Memastikan TIDAK ADA tuts home row lainnya pada tahap pengenalan awal G & H
+      expect(lesson19.text).not.toContain('a');
+      expect(lesson19.text).not.toContain('s');
+      expect(lesson19.text).not.toContain('d');
+      expect(lesson19.text).not.toContain('f');
+      expect(lesson19.text).not.toContain('j');
+      expect(lesson19.text).not.toContain('k');
+      expect(lesson19.text).not.toContain('l');
+      expect(lesson19.text).not.toContain(';');
+    });
+
+    it('Memvalidasi penugasan jari telunjuk untuk tuts G (3 - kiri) dan H (5 - kanan)', () => {
+      expect(fingerMap['g']).toBe(3); // Telunjuk Kiri (Inward Reach dari F)
+      expect(fingerMap['h']).toBe(5); // Telunjuk Kanan (Inward Reach dari J)
+      expect(fingerNames[3]).toBe('Telunjuk kiri');
+      expect(fingerNames[5]).toBe('Telunjuk kanan');
+    });
+
+    it('Kelanjutan modul terstruktur: 19 (Keys g & h) -> 20 (Review: g & h)', () => {
+      expect(lesson20.id).toBe('1-20');
+      expect(lesson20.title).toBe('Review: g & h');
+      expect(lesson20.keys).toContain('fghj');
     });
   });
 });

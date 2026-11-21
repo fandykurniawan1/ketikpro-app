@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Lock, BookOpen, Sparkles, ChevronDown, ChevronUp } from 'lucide-react';
 import { allLessons, levelOf, defaultPassCriteria } from '@/core/constants/curriculum';
@@ -12,6 +12,12 @@ import { TypingDisplay } from '@/components/typing/TypingDisplay';
 import { ResultDialog } from '@/components/typing/ResultDialog';
 import { LevelOneGuide } from '@/components/keyboard/LevelOneGuide';
 import { BalloonNinjaGame } from '@/components/game/BalloonNinjaGame';
+import { NewKeyIntroGuide } from '@/components/keyboard/NewKeyIntroGuide';
+import { ReviewKeyGuide } from '@/components/keyboard/ReviewKeyGuide';
+import { FirstEightKeysGuide } from '@/components/keyboard/FirstEightKeysGuide';
+import { LeftHandGuide } from '@/components/keyboard/LeftHandGuide';
+import { RightHandGuide } from '@/components/keyboard/RightHandGuide';
+import { GHIntroGuide } from '@/components/keyboard/GHIntroGuide';
 import type { Stats } from '@/types/typing';
 
 export const LessonPage: React.FC = () => {
@@ -34,11 +40,61 @@ export const LessonPage: React.FC = () => {
   const [showLevelOneReference, setShowLevelOneReference] = useState(false);
 
   const isPlayLesson = lesson?.title.toLowerCase().includes('play') || false;
-  const [useGameMode, setUseGameMode] = useState<boolean>(() => isPlayLesson);
+  const isGHLesson =
+    lesson?.id === '1-19' ||
+    (Boolean(lesson?.title.toLowerCase().includes('keys g & h')) && !isPlayLesson);
 
-  useEffect(() => {
-    setUseGameMode(lesson?.title.toLowerCase().includes('play') || false);
-  }, [lesson?.id, lesson?.title]);
+  const isNewKeyLesson =
+    ((lesson?.id === '1-12' ||
+      Boolean(lesson?.title.toLowerCase().startsWith('keys '))) &&
+      !isPlayLesson &&
+      !isGHLesson);
+
+  const isReviewLesson =
+    lesson?.id === '1-13' ||
+    (Boolean(lesson?.title.toLowerCase().startsWith('review: a & ;')) && !isPlayLesson);
+
+  const isFirstEightKeysLesson =
+    lesson?.id === '1-14' ||
+    (Boolean(lesson?.title.toLowerCase().includes('first 8 keys')) && !isPlayLesson);
+
+  const isLeftHandLesson =
+    lesson?.id === '1-17' ||
+    (Boolean(lesson?.title.toLowerCase().includes('l hand')) && !isPlayLesson);
+
+  const isRightHandLesson =
+    lesson?.id === '1-18' ||
+    (Boolean(lesson?.title.toLowerCase().includes('r hand')) && !isPlayLesson);
+
+  const newKeysList =
+    lesson?.id === '1-12'
+      ? ['a', ';']
+      : lesson?.keys
+      ? lesson.keys.replace(/\s+/g, '').split('')
+      : [];
+
+  const reviewKeysList = ['a', ';'];
+
+  const [useGameMode, setUseGameMode] = useState<boolean>(() => isPlayLesson);
+  const [showNewKeyIntro, setShowNewKeyIntro] = useState<boolean>(true);
+  const [showReviewGuide, setShowReviewGuide] = useState<boolean>(true);
+  const [showFirstEightKeysGuide, setShowFirstEightKeysGuide] = useState<boolean>(true);
+  const [showLeftHandGuide, setShowLeftHandGuide] = useState<boolean>(true);
+  const [showRightHandGuide, setShowRightHandGuide] = useState<boolean>(true);
+  const [showGHGuide, setShowGHGuide] = useState<boolean>(true);
+
+  // Synchronize state when lesson changes without cascading effect renders
+  const [prevLessonId, setPrevLessonId] = useState(lesson?.id);
+  if (prevLessonId !== lesson?.id) {
+    setPrevLessonId(lesson?.id);
+    setUseGameMode(isPlayLesson);
+    setShowNewKeyIntro(true);
+    setShowReviewGuide(true);
+    setShowFirstEightKeysGuide(true);
+    setShowLeftHandGuide(true);
+    setShowRightHandGuide(true);
+    setShowGHGuide(true);
+  }
 
   const handleFinish = React.useCallback(
     (stats: Stats, weakKeys: Record<string, number>) => {
@@ -60,7 +116,7 @@ export const LessonPage: React.FC = () => {
         weakKeys,
       });
     },
-    [lesson, saveSessionResult]
+    [lesson, saveSessionResult, setFinishedStats, setSessionWeakKeys]
   );
 
   const handleRetry = () => {
@@ -278,8 +334,101 @@ export const LessonPage: React.FC = () => {
         </div>
       ) : (
         <div key={sessionKey} className="space-y-6">
+          {/* New Key Introduction Guide for 1-12 (Keys a & ;) and other new keys lessons */}
+          {isNewKeyLesson && (
+            <NewKeyIntroGuide
+              lessonId={lesson.id}
+              lessonTitle={lesson.title}
+              keys={newKeysList}
+              isOpen={showNewKeyIntro}
+              onToggleOpen={() => setShowNewKeyIntro((prev) => !prev)}
+              onWarmupComplete={() => {
+                inputRef.current?.focus();
+              }}
+            />
+          )}
+
+          {/* Review Guide for 1-13 (Review: a & ;) */}
+          {isReviewLesson && (
+            <ReviewKeyGuide
+              lessonId={lesson.id}
+              lessonTitle={lesson.title}
+              isOpen={showReviewGuide}
+              onToggleOpen={() => setShowReviewGuide((prev) => !prev)}
+              onWarmupComplete={() => {
+                inputRef.current?.focus();
+              }}
+            />
+          )}
+
+          {/* First 8 Keys Word Practice Guide for 1-14 */}
+          {isFirstEightKeysLesson && (
+            <FirstEightKeysGuide
+              lessonId={lesson.id}
+              lessonTitle={lesson.title}
+              isOpen={showFirstEightKeysGuide}
+              onToggleOpen={() => setShowFirstEightKeysGuide((prev) => !prev)}
+              onWarmupComplete={() => {
+                inputRef.current?.focus();
+              }}
+            />
+          )}
+
+          {/* Left Hand Isolation Guide for 1-17 */}
+          {isLeftHandLesson && (
+            <LeftHandGuide
+              lessonId={lesson.id}
+              lessonTitle={lesson.title}
+              isOpen={showLeftHandGuide}
+              onToggleOpen={() => setShowLeftHandGuide((prev) => !prev)}
+              onWarmupComplete={() => {
+                inputRef.current?.focus();
+              }}
+            />
+          )}
+
+          {/* Right Hand Isolation Guide for 1-18 */}
+          {isRightHandLesson && (
+            <RightHandGuide
+              lessonId={lesson.id}
+              lessonTitle={lesson.title}
+              isOpen={showRightHandGuide}
+              onToggleOpen={() => setShowRightHandGuide((prev) => !prev)}
+              onWarmupComplete={() => {
+                inputRef.current?.focus();
+              }}
+            />
+          )}
+
+          {/* G & H Inward Reach Introduction Guide for 1-19 */}
+          {isGHLesson && (
+            <GHIntroGuide
+              lessonId={lesson.id}
+              lessonTitle={lesson.title}
+              isOpen={showGHGuide}
+              onToggleOpen={() => setShowGHGuide((prev) => !prev)}
+              onWarmupComplete={() => {
+                inputRef.current?.focus();
+              }}
+            />
+          )}
+
           {/* Home row guide if specified */}
-          {lesson.guide && <HomeRowGuide activeChar={nextRequiredKey} />}
+          {lesson.guide && (
+            <HomeRowGuide
+              activeChar={nextRequiredKey}
+              highlightNewKeys={
+                isGHLesson
+                  ? ['g', 'h']
+                  : isNewKeyLesson
+                  ? newKeysList
+                  : isReviewLesson
+                  ? reviewKeysList
+                  : undefined
+              }
+              focusHand={isLeftHandLesson ? 'left' : isRightHandLesson ? 'right' : 'both'}
+            />
+          )}
 
           {/* Real-time Metrics bar */}
           <MetricsBar
@@ -321,6 +470,15 @@ export const LessonPage: React.FC = () => {
               nextChar={nextRequiredKey}
               hit={hit}
               initialMode={lesson.blind ? 'blind' : 'full'}
+              newKeys={
+                isGHLesson
+                  ? ['g', 'h']
+                  : isNewKeyLesson
+                  ? newKeysList
+                  : isReviewLesson
+                  ? reviewKeysList
+                  : undefined
+              }
             />
           ) : (
             <p className="text-center text-xs sm:text-sm text-muted-foreground py-4">
